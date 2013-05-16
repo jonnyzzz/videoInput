@@ -125,7 +125,7 @@ static bool verbose = true;
 //videoInput defines
 #define VI_VERSION	 0.1995
 #define VI_MAX_CAMERAS  20
-#define VI_NUM_TYPES    18 //DON'T TOUCH
+#define VI_NUM_TYPES    15 //DON'T TOUCH
 #define VI_NUM_FORMATS  18 //DON'T TOUCH
 
 //defines for setPhyCon - tuner is not as well supported as composite and s-video 
@@ -367,10 +367,12 @@ class videoInput{
 		
 		GUID CAPTURE_MODE;
 		
+    /*
 		//Extra video subtypes
 		GUID MEDIASUBTYPE_Y800;
 		GUID MEDIASUBTYPE_Y8;
 		GUID MEDIASUBTYPE_GREY;
+    */
 
 		videoDevice * VDList[VI_MAX_CAMERAS];
 		GUID mediaSubtypes[VI_NUM_TYPES];

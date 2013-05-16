@@ -6,23 +6,21 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //THE SOFTWARE.
 
-#define DEBUG 1
-#define _DEBUG 1
-
 #include "stdafx.h"
 #include "videoInput.h"
 #include "tchar.h"
+#include <vector>
+//for threading
+#include <process.h>
+
 
 //Include Directshow stuff here so we don't worry about needing all the h files.
 #include "DShow.h"
-//#include "streams.h"
-#include "Qedit.h"
-//#include "vector"
+//#include "Streams.h"
+#include "thirdParty/Qedit.h" 
 //#include "Aviriff.h"
 //#include  "Windows.h"
 
-//for threading
-#include <process.h>
 
 ///////////////////////////  HANDY FUNCTIONS  /////////////////////////////
 
@@ -299,7 +297,7 @@ void videoDevice::destroyGraph(){
 			FilterInfo.pGraph->Release();
 
 			int count = 0;
-			char buffer[255];
+			WCHAR buffer[255];
 			memset(buffer, 0, 255 * sizeof(char));
 						
 			while( FilterInfo.achName[count] != 0x00 ) 
@@ -308,10 +306,10 @@ void videoDevice::destroyGraph(){
 				count++;
 			}
 			
-			if(verbose)printf("SETUP: removing filter %s...\n", buffer);
+			if(verbose)printf("SETUP: removing filter %ws...\n", buffer);
 			hr = pGraph->RemoveFilter(pFilter);
 			if (FAILED(hr)) { if(verbose)printf("SETUP: pGraph->RemoveFilter() failed. \n"); return; }
-			if(verbose)printf("SETUP: filter removed %s  \n",buffer);
+			if(verbose)printf("SETUP: filter removed %ws  \n",buffer);
 			
 			pFilter->Release();
 			pFilter = NULL;
@@ -464,10 +462,12 @@ videoInput::videoInput(){
      
     if(verbose)printf("\n***** VIDEOINPUT LIBRARY - %2.04f - TFW07 *****\n\n",VI_VERSION);
 
+    /*
 	//added for the pixelink firewire camera
  	MEDIASUBTYPE_Y800 = (GUID)FOURCCMap(FCC('Y800'));
  	MEDIASUBTYPE_Y8   = (GUID)FOURCCMap(FCC('Y8'));
  	MEDIASUBTYPE_GREY = (GUID)FOURCCMap(FCC('GREY'));
+  */
 
 	//The video types we support
 	//in order of preference
@@ -488,10 +488,12 @@ videoInput::videoInput(){
 	mediaSubtypes[13] 	= MEDIASUBTYPE_Y211;
 	mediaSubtypes[14]	= MEDIASUBTYPE_AYUV;
 
+  /*
 	//non standard
 	mediaSubtypes[15]	= MEDIASUBTYPE_Y800;
     mediaSubtypes[16]	= MEDIASUBTYPE_Y8;
 	mediaSubtypes[17]	= MEDIASUBTYPE_GREY;	
+  */
 	
 	//The video formats we support
 	formatTypes[VI_NTSC_M]		= AnalogVideo_NTSC_M;
@@ -1090,7 +1092,7 @@ bool videoInput::setVideoSettingFilterPct(int deviceID, long Property, float pct
 	}else{
 		//we need to rasterize the value to the stepping amnt
 		long mod 		= value % stepAmnt;
-		float halfStep 	= (float)stepAmnt * 0.5;
+		double halfStep 	= stepAmnt * 0.5;
 		if( mod < halfStep ) rasterValue -= mod;
 		else rasterValue += stepAmnt - mod;	
 		printf("RASTER - pctValue is %f - value is %i - step is %i - mod is %i - rasterValue is %i\n", pctValue, value, stepAmnt, mod, rasterValue); 
@@ -1177,7 +1179,7 @@ bool videoInput::setVideoSettingCameraPct(int deviceID, long Property, float pct
 	}else{
 		//we need to rasterize the value to the stepping amnt
 		long mod 		= value % stepAmnt;
-		float halfStep 	= (float)stepAmnt * 0.5;
+		double halfStep 	= stepAmnt * 0.5;
 		if( mod < halfStep ) rasterValue -= mod;
 		else rasterValue += stepAmnt - mod;	
 		printf("RASTER - pctValue is %f - value is %i - step is %i - mod is %i - rasterValue is %i\n", pctValue, value, stepAmnt, mod, rasterValue); 
@@ -1531,25 +1533,25 @@ void videoInput::processPixels(unsigned char * src, unsigned char * dst, int wid
 void videoInput::getMediaSubtypeAsString(GUID type, char * typeAsString){
 
 	char tmpStr[8];
-	if( type == MEDIASUBTYPE_RGB24) sprintf(tmpStr, "RGB24");
-	else if(type == MEDIASUBTYPE_RGB32) sprintf(tmpStr, "RGB32");
-	else if(type == MEDIASUBTYPE_RGB555)sprintf(tmpStr, "RGB555");
-	else if(type == MEDIASUBTYPE_RGB565)sprintf(tmpStr, "RGB565");					
-	else if(type == MEDIASUBTYPE_YUY2) 	sprintf(tmpStr, "YUY2");
-	else if(type == MEDIASUBTYPE_YVYU) 	sprintf(tmpStr, "YVYU");
-	else if(type == MEDIASUBTYPE_YUYV) 	sprintf(tmpStr, "YUYV");
-	else if(type == MEDIASUBTYPE_IYUV) 	sprintf(tmpStr, "IYUV");
-	else if(type == MEDIASUBTYPE_UYVY)  sprintf(tmpStr, "UYVY");
-	else if(type == MEDIASUBTYPE_YV12)  sprintf(tmpStr, "YV12");
-	else if(type == MEDIASUBTYPE_YVU9)  sprintf(tmpStr, "YVU9");
-	else if(type == MEDIASUBTYPE_Y411) 	sprintf(tmpStr, "Y411");
-	else if(type == MEDIASUBTYPE_Y41P) 	sprintf(tmpStr, "Y41P");
-	else if(type == MEDIASUBTYPE_Y211)  sprintf(tmpStr, "Y211");
-	else if(type == MEDIASUBTYPE_AYUV) 	sprintf(tmpStr, "AYUV");
-	else if(type == MEDIASUBTYPE_Y800) 	sprintf(tmpStr, "Y800");  
-	else if(type == MEDIASUBTYPE_Y8)   	sprintf(tmpStr, "Y8");  
-	else if(type == MEDIASUBTYPE_GREY) 	sprintf(tmpStr, "GREY");  
-	else sprintf(tmpStr, "OTHER");
+	if( type == MEDIASUBTYPE_RGB24) sprintf_s(tmpStr, "RGB24");
+	else if(type == MEDIASUBTYPE_RGB32) sprintf_s(tmpStr, "RGB32");
+	else if(type == MEDIASUBTYPE_RGB555)sprintf_s(tmpStr, "RGB555");
+	else if(type == MEDIASUBTYPE_RGB565)sprintf_s(tmpStr, "RGB565");					
+	else if(type == MEDIASUBTYPE_YUY2) 	sprintf_s(tmpStr, "YUY2");
+	else if(type == MEDIASUBTYPE_YVYU) 	sprintf_s(tmpStr, "YVYU");
+	else if(type == MEDIASUBTYPE_YUYV) 	sprintf_s(tmpStr, "YUYV");
+	else if(type == MEDIASUBTYPE_IYUV) 	sprintf_s(tmpStr, "IYUV");
+	else if(type == MEDIASUBTYPE_UYVY)  sprintf_s(tmpStr, "UYVY");
+	else if(type == MEDIASUBTYPE_YV12)  sprintf_s(tmpStr, "YV12");
+	else if(type == MEDIASUBTYPE_YVU9)  sprintf_s(tmpStr, "YVU9");
+	else if(type == MEDIASUBTYPE_Y411) 	sprintf_s(tmpStr, "Y411");
+	else if(type == MEDIASUBTYPE_Y41P) 	sprintf_s(tmpStr, "Y41P");
+	else if(type == MEDIASUBTYPE_Y211)  sprintf_s(tmpStr, "Y211");
+	else if(type == MEDIASUBTYPE_AYUV) 	sprintf_s(tmpStr, "AYUV");
+  //else if(type == MEDIASUBTYPE_Y800) 	sprintf_s(tmpStr, "Y800");  
+  //else if(type == MEDIASUBTYPE_Y8)   	sprintf_s(tmpStr, "Y8");  
+  //else if(type == MEDIASUBTYPE_GREY) 	sprintf_s(tmpStr, "GREY");  
+	else sprintf_s(tmpStr, "OTHER");
 
 	memcpy(typeAsString, tmpStr, sizeof(char)*8);
 }
