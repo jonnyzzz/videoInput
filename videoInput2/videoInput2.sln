@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "videoInput2", "videoInput2\videoInput2.vcxproj", "{15D72022-CA80-4BBA-9D1A-98C24A833EB4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{15D72022-CA80-4BBA-9D1A-98C24A833EB4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{15D72022-CA80-4BBA-9D1A-98C24A833EB4}.Debug|Win32.Build.0 = Debug|Win32
+		{15D72022-CA80-4BBA-9D1A-98C24A833EB4}.Release|Win32.ActiveCfg = Release|Win32
+		{15D72022-CA80-4BBA-9D1A-98C24A833EB4}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

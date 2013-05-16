@@ -10,3 +10,11 @@ obj/
 */*/*.layout
 */*/*.depend
 
+*x64
+*Debug
+*Release
+*ipch
+*.user
+*.sdf
+*.opensdf
+*.suo
