@@ -51,7 +51,6 @@ Thanks to:
 #endif
 #include <windows.h>
 
-
 //Example Usage
 /*
 	//create a videoInput object
